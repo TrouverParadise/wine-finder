@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Léoniea Exclusive Wine Collection</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f5f0;
+            color: #2c1810;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .wine-logo {
+            color: #722f37;
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #722f37;
+            text-align: center;
+            border-bottom: 2px solid #722f37;
+            padding-bottom: 10px;
+        }
+
+        .wine-card {
+            border-left: 4px solid #722f37;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        .wine-name {
+            color: #722f37;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .exclusive-label {
+            background-color: #722f37;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .tasting-notes {
+            font-style: italic;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .pairing-notes {
+            background-color: #f8f4f4;
+            padding: 10px;
+            border-left: 3px solid #722f37;
+            margin: 10px 0;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #722f37;
+            margin-top: 10px;
+        }
+
+        .input-section {
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #722f37;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #591f26;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff8f8;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .recommendation-section {
+            margin: 15px 0;
+        }
+
+        .recipe-section {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #fcfcfc;
+            border-radius: 5px;
+        }
+
+        .bottle-calculation {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f5e6e8;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="wine-logo">Léoniea</div>
+        <h1>Exclusive Wine Collection</h1>
+        
+        <div class="input-section">
+            <div class="form-group">
+                <label for="total-guests">Total Number of Guests:</label>
+                <input type="number" id="total-guests" min="1">
+            </div>
+
+            <div class="form-group">
+                <label for="main-dish">Main Dish:</label>
+                <input type="text" id="main-dish">
+            </div>
+
+            <div class="form-group">
+                <label for="vegan-guests">Number of Vegan Guests:</label>
+                <input type="number" id="vegan-guests" min="0">
+            </div>
+
+            <div class="form-group">
+                <label for="courses">Number of Courses:</label>
+                <input type="number" id="courses" min="1">
+            </div>
+
+            <div class="form-group">
+                <label for="non-alcoholic">Number of Non-Alcoholic Guests:</label>
+                <input type="number" id="non-alcoholic" min="0">
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="vegan-recipe">
+                    Include Vegan Recipe Suggestion
+                </label>
+            </div>
+
+            <button onclick="generateRecommendation()">Get Personalized Recommendations</button>
+        </div>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const leonieaWines = {
+            meat: {
+                regular: [
+                    {
+                        name: "2018 Cabernet Sauvignon",
+                        tastingNotes: "Dry with healthy tannin, featuring notes of cassis, dark fruits, cherries, and vanilla from oak aging.",
+                        pairingNotes: "Perfect with red meats and dark chocolates.",
+                        price: "130.99"
+                    },
+                    {
+                        name: "2015 Red Bordeaux",
+                        tastingNotes: "Famous blend of Cabernet Sauvignon and Merlot with mineral and fruit notes, savory tannins.",
+                        pairingNotes: "Excellent with steak poivre, roast lamb or pork, and flavorful cheese plates.",
+                        price: "199.99"
+                    }
+                ],
+                nonAlcoholic: [
+                    {
+                        name: "Pouvoir *Non Alcoholic*",
+                        tastingNotes: "De-alcoholized Merlot with aromas of red currants, black cherry, and mocha.",
+                        pairingNotes: "Crafted to complement hearty dishes while maintaining complexity.",
+                        price: "72.99"
+                    }
+                ]
+            },
+            seafood: {
+                regular: [
+                    {
+                        name: "2020 Chardonnay",
+                        tastingNotes: "Dry, medium to full-bodied with notes of apple, lemon, papaya and pineapple.",
+                        pairingNotes: "Perfect pairing with seafood dishes.",
+                        price: "105.99"
+                    },
+                    {
+                        name: "2019 Sauvignon Blanc",
+                        tastingNotes: "Dry white wine with punchy acidity, featuring lime, green apple, passion fruit and white peach.",
+                        pairingNotes: "Ideal for seafood and summer dishes.",
+                        price: "175.99"
+                    }
+                ],
+                nonAlcoholic: [
+                    {
+                        name: "Mon Fleur *Non Alcoholic*",
+                        tastingNotes: "De-alcoholized Chardonnay with tropical fruit character and subtle oak.",
+                        pairingNotes: "Pairs beautifully with spaghetti carbonara, mango mahi-mahi, and sautéed scallops.",
+                        price: "69.99"
+                    }
+                ]
+            },
+            lightMeals: {
+                regular: [
+                    {
+                        name: "Scarlet Blush - Rosé",
+                        tastingNotes: "Semi-sweet with 5% residual sugar, featuring hibiscus, strawberry, and red berry notes.",
+                        pairingNotes: "Perfect for grilled meats, seafood paella, or creamy cheeses.",
+                        price: "75.99"
+                    },
+                    {
+                        name: "Chérie - Rosé",
+                        tastingNotes: "Off-dry Zinfandel Rosé with less than 4g residual sugar, featuring ripe strawberry and raspberry notes.",
+                        pairingNotes: "Perfect for spring or summer brunch.",
+                        price: "105.99"
+                    }
+                ],
+                nonAlcoholic: [
+                    {
+                        name: "Âme - Rosé",
+                        tastingNotes: "Non-alcoholic dry Rosé with notes of watermelon, ripe peaches and fresh herbs.",
+                        pairingNotes: "Perfect for summer adventures and light meals.",
+                        price: "65.99"
+                    }
+                ]
+            },
+            celebration: {
+                regular: [
+                    {
+                        name: "Déesse Noire Champagne",
+                        tastingNotes: "Brut Réserve with intense aromas of green apple and pear, complex with yeasty hints.",
+                        pairingNotes: "Pairs well with pasta, salads, fish, or excellent on its own.",
+                        price: "180.00"
+                    }
+                ]
+            }
+        };
+
+        function calculateBottles(guests, nonAlcoholic, courses) {
+            const drinkingGuests = guests - nonAlcoholic;
+            const bottlesNeeded = Math.ceil((drinkingGuests * courses) / 4);
+            const nonAlcBottlesNeeded = Math.ceil((nonAlcoholic * courses) / 4);
+            
+            return {
+                regular: bottlesNeeded,
+                nonAlcoholic: nonAlcBottlesNeeded
+            };
+        }
+
+        function generateWineCard(wine) {
+            return `
+                <div class="wine-card">
+                    <div class="wine-name">
+                        ${wine.name}
+                        <span class="exclusive-label">Léoniea Exclusive</span>
+                    </div>
+                    <div class="tasting-notes">
+                        <strong>Tasting Notes:</strong> ${wine.tastingNotes}
+                    </div>
+                    <div class="pairing-notes">
+                        <strong>Pairing Notes:</strong> ${wine.pairingNotes}
+                    </div>
+                    <div class="price">
+                        $${wine.price}
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateRecommendation() {
+            const totalGuests = parseInt(document.getElementById('total-guests').value);
+            const mainDish = document.getElementById('main-dish').value.toLowerCase();
+            const veganGuests = parseInt(document.getElementById('vegan-guests').value);
+            const courses = parseInt(document.getElementById('courses').value);
+            const nonAlcoholic = parseInt(document.getElementById('non-alcoholic').value);
+            const includeVeganRecipe = document.getElementById('vegan-recipe').checked;
+
+            const bottles = calculateBottles(totalGuests, nonAlcoholic, courses);
+            
+            let recommendation = `<h3>Your Personalized Léoniea Wine Selection</h3>`;
+            
+            // Determine wine selection based on main dish
+            let wineSelection;
+            if (mainDish.includes('beef') || mainDish.includes('lamb') || mainDish.includes('steak')) {
+                wineSelection = leonieaWines.meat;
+            } else if (mainDish.includes('fish') || mainDish.includes('seafood')) {
+                wineSelection = leonieaWines.seafood;
+            } else if (mainDish.includes('salad') || mainDish.includes('vegetable')) {
+                wineSelection = leonieaWines.lightMeals;
+            } else {
+                // Default to celebration wines if dish type is unclear
+                wineSelection = leonieaWines.celebration;
+            }
+
+            recommendation += `
+                <div class="recommendation-section">
+                    <h4>Premium Wine Selections</h4>
+                    ${wineSelection.regular.map(wine => generateWineCard(wine)).join('')}
+                `;
+
+            if (nonAlcoholic > 0 && wineSelection.nonAlcoholic) {
+                recommendation += `
+                    <h4>Non-Alcoholic Selections</h4>
+                    ${wineSelection.nonAlcoholic.map(wine => generateWineCard(wine)).join('')}
+                `;
+            }
+
+            if (includeVeganRecipe) {
+                recommendation += `
+                <div class="recipe-section">
+                    <h4>Léoniea's Vegan Pairing Suggestion</h4>
+                    <p>Our sommelier recommends pairing these wines with our signature vegan dishes:</p>
+                    <ul>
+                        <li>Grilled Mediterranean vegetables with herbs de Provence</li>
+                        <li>Wild mushroom risotto with truffle oil</li>
+                        <li>Roasted root vegetables with fresh herbs</li>
+                    </ul>
+                </div>`;
+            }
+
+            recommendation += `
+            <div class="bottle-calculation">
+                <h4>Recommended Quantity:</h4>
+                <ul>
+                    <li>${bottles.regular} bottles of Léoniea premium wines</li>
+                    ${nonAlcoholic > 0 ? `<li>${bottles.nonAlcoholic} bottles of our non-alcoholic selections</li>` : ''}
+                </ul>
+                <p><em>Our premium wine service suggests one bottle per 4 guests per course to ensure the optimal tasting experience</em></p>
+            </div>`;
+
+            document.getElementById('result').innerHTML = recommendation;
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
